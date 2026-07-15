@@ -164,3 +164,102 @@ async def record_stock_transfer(
     return await asyncio.to_thread(
         _sync_record_stock_transfer, sku, from_store, to_store, qty, decided_by
     )
+
+def _sync_get_stock_transfers(sku: str | None, store: str | None, limit: int) -> list[dict]:
+    if not LAKEHOUSE_ID:
+        raise Exception("FABRIC_LAKEHOUSE_ID not configured — set it in .env")
+
+    dt = DeltaTable(STOCK_TRANSFERS_PATH, storage_options=_storage_options())
+    df = dt.to_pyarrow_table().to_pandas()
+
+    if sku:
+        df = df[df["sku"].str.upper() == sku.upper()]
+    if store:
+        df = df[
+            df["from_store"].str.contains(store, case=False, na=False)
+            | df["to_store"].str.contains(store, case=False, na=False)
+        ]
+
+    df = df.sort_values("decided_at", ascending=False).head(limit)
+    return df.to_dict(orient="records")
+
+
+async def get_stock_transfers(sku: str | None = None, store: str | None = None, limit: int = 100) -> list[dict]:
+    """Read back the stock_transfers audit log, most recent first. Optional
+    filters: sku (exact match), store (substring match on either side)."""
+    return await asyncio.to_thread(_sync_get_stock_transfers, sku, store, limit)
+
+
+# ─── Recommendation status write-back ────────────────────────────
+# Marks a row in Tables/dbo/final_transfer_sizewise as APPROVED/REJECTED so it
+# stops showing up in future recommendation pulls. Separate from (in addition
+# to) the stock_transfers audit log, which is where the "what got approved,
+# by whom, when" record actually lives.
+RECOMMENDATIONS_TABLE = "final_transfer_sizewise"
+RECOMMENDATIONS_PATH = (
+    f"abfss://{WORKSPACE_ID}@onelake.dfs.fabric.microsoft.com/"
+    f"{LAKEHOUSE_ID}/Tables/dbo/{RECOMMENDATIONS_TABLE}"
+)
+REC_KEY_COLS = ["receiver_site_id", "donor_site_id", "sku", "size", "created_at", "transfer_qty"]
+
+
+def _sync_update_recommendation_status(key: dict, status: str) -> dict:
+    if not LAKEHOUSE_ID:
+        raise Exception("FABRIC_LAKEHOUSE_ID not configured — set it in .env")
+
+    dt = DeltaTable(RECOMMENDATIONS_PATH, storage_options=_storage_options())
+
+    # Match the Delta table's actual column types (checked directly against
+    # the schema) — receiver_site_id/donor_site_id/sku/size/created_at are
+    # strings, transfer_qty is a double.
+    row = {
+        "receiver_site_id": str(key["receiver_site_id"]),
+        "donor_site_id": str(key["donor_site_id"]),
+        "sku": str(key["sku"]),
+        "size": str(key["size"]),
+        "created_at": str(key["created_at"]),
+        "transfer_qty": float(key["transfer_qty"]),
+        "new_status": status,
+    }
+    source = pd.DataFrame([row])
+    # status = 'PENDING' guard: if this recommendation was already decided by
+    # an earlier click, the merge matches nothing and updates nothing instead
+    # of silently overwriting a prior decision.
+    predicate = " AND ".join(f"target.{col} = source.{col}" for col in REC_KEY_COLS)
+    predicate += " AND target.status = 'PENDING'"
+
+    stats = (
+        dt.merge(
+            source=source,
+            predicate=predicate,
+            source_alias="source",
+            target_alias="target",
+        )
+        .when_matched_update(updates={"status": "source.new_status"})
+        .execute()
+    )
+    key["already_decided"] = stats.get("num_target_rows_updated", 0) == 0
+    log_fetch(
+        "recommendation_status_write",
+        f"Lakehouse {LAKEHOUSE_ID} -> Tables/dbo/{RECOMMENDATIONS_TABLE}",
+        f"{row['sku']} {row['receiver_site_id']}<-{row['donor_site_id']} -> {status}",
+    )
+    return {**key, "status": status}
+
+
+async def update_recommendation_status(
+    receiver_site_id, donor_site_id, sku, size, created_at, transfer_qty, status: str
+) -> dict:
+    """Mark a recommendation row APPROVED or REJECTED so it's excluded from
+    future pulls of get_transfer_recommendations. Only succeeds if the row is
+    still PENDING — returns {'already_decided': True, ...} instead of
+    overwriting a prior decision if someone clicks the same card twice."""
+    key = {
+        "receiver_site_id": receiver_site_id,
+        "donor_site_id": donor_site_id,
+        "sku": sku,
+        "size": size,
+        "created_at": created_at,
+        "transfer_qty": transfer_qty,
+    }
+    return await asyncio.to_thread(_sync_update_recommendation_status, key, status)

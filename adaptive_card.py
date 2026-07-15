@@ -193,6 +193,80 @@ def build_transfer_card(plan: dict):
     return MessageFactory.attachment(attachment)
 
 
+def build_recommendation_card(rec: dict):
+    """
+    Approve / Reject card for a stock-transfer recommendation pulled from
+    Tables/dbo/final_transfer_sizewise. Button data carries every field
+    needed to (a) write the stock_transfers audit row and (b) mark the
+    source recommendation row APPROVED/REJECTED — no server-side state.
+    """
+    payload = {
+        "type": "transfer_recommendation",
+        "sku": rec["sku"],
+        "size": rec["size"],
+        "receiver_site_name": rec["receiver_site_name"],
+        "receiver_site_id": rec["receiver_site_id"],
+        "donor_site_name": rec["donor_site_name"],
+        "donor_site_id": rec["donor_site_id"],
+        "transfer_qty": rec["transfer_qty"],
+        "created_at": rec["created_at"],
+    }
+
+    card = {
+        "type": "AdaptiveCard",
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.4",
+        "body": [
+            {
+                "type": "Container",
+                "style": "warning",
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": "🔔 Stock Transfer Recommendation",
+                        "weight": "Bolder",
+                        "size": "Large",
+                        "color": "Warning",
+                        "wrap": True
+                    }
+                ]
+            },
+            {
+                "type": "FactSet",
+                "spacing": "Medium",
+                "facts": [
+                    {"title": "SKU / Size", "value": f"{rec['sku']} / {rec['size']}"},
+                    {"title": "Donor store", "value": f"{rec['donor_site_name']} [{rec['donor_store_grade']}]"},
+                    {"title": "Receiver store", "value": f"{rec['receiver_site_name']} [{rec['receiver_store_grade']}]"},
+                    {"title": "Quantity", "value": str(int(rec["transfer_qty"]))},
+                    {"title": "Receiver stock", "value": str(rec["receiver_soh"])},
+                    {"title": "Priority score", "value": str(rec["priority_score"])},
+                ]
+            }
+        ],
+        "actions": [
+            {
+                "type": "Action.Submit",
+                "title": "✅ Approve Transfer",
+                "style": "positive",
+                "data": {**payload, "action": "approve"}
+            },
+            {
+                "type": "Action.Submit",
+                "title": "❌ Reject",
+                "style": "destructive",
+                "data": {**payload, "action": "reject"}
+            }
+        ]
+    }
+
+    attachment = Attachment(
+        content_type="application/vnd.microsoft.card.adaptive",
+        content=card
+    )
+    return MessageFactory.attachment(attachment)
+
+
 def build_result_card(fabric_result: dict):
     """
     Simple result card — direct answer from Fabric Agent

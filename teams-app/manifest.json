@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "b1c33470-25d0-436f-9d7b-689aaea51b59",
+  "packageName": "com.meridian.stockpulsebot",
+  "developer": {
+    "name": "Meridian Solutions",
+    "websiteUrl": "https://onmeridian.com",
+    "privacyUrl": "https://onmeridian.com/privacy",
+    "termsOfUseUrl": "https://onmeridian.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Stockpulse Bot",
+    "full": "Stockpulse Inventory Assistant"
+  },
+  "description": {
+    "short": "Ask about top SKUs, dead stock, store performance, and approve transfers.",
+    "full": "Stockpulse Bot answers inventory and sales questions directly from your Fabric Lakehouse — top-selling SKUs, dead stock by store, best-performing stores, and SKU counts — and lets you approve or reject stock transfer recommendations right inside Teams."
+  },
+  "accentColor": "#005A9C",
+  "bots": [
+    {
+      "botId": "b1c33470-25d0-436f-9d7b-689aaea51b59",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}

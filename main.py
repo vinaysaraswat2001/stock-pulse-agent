@@ -1,9 +1,10 @@
 import os
 import asyncio
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Query
 from botbuilder.core import BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext
 from botbuilder.schema import Activity
 from bot import StockpulseBot
+from lakehouse_client import get_stock_transfers
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -55,3 +56,20 @@ async def messages(request: Request):
 
     await adapter.process_activity(activity, auth_header, call_bot)
     return Response(status_code=200)
+
+
+@app.get("/api/transfers")
+async def transfers(
+    sku: str | None = Query(default=None, description="Filter to one SKU (exact match)"),
+    store: str | None = Query(default=None, description="Filter to a store (substring match, either side)"),
+    limit: int = Query(default=100, le=1000),
+):
+    """Read-only view of Tables/dbo/stock_transfers — every transfer approved
+    (or attempted) via the bot's Approve/Reject cards, most recent first.
+
+    NOTE: unauthenticated. Anyone with the ngrok URL can call this. Add an
+    API key or Azure AD auth before relying on this beyond internal testing.
+    """
+    rows = await get_stock_transfers(sku=sku, store=store, limit=limit)
+    return {"count": len(rows), "transfers": rows}
+

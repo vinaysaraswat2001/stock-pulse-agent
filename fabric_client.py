@@ -35,6 +35,7 @@ print(f"[FABRIC] CLIENT_ID = {FABRIC_CLIENT_ID}")# ─── Bot Tenant (Azure B
 
 
 # ─── Get Access Token ────────────────────────────
+
 def get_fabric_token() -> str:
     msal_app = ConfidentialClientApplication(
         client_id=FABRIC_CLIENT_ID,
@@ -42,6 +43,28 @@ def get_fabric_token() -> str:
         authority=f"https://login.microsoftonline.com/{FABRIC_TENANT_ID}"  # ← Fabric tenant
     )
     token_response = msal_app.acquire_token_for_client(scopes=FABRIC_SCOPE)
+# One shared MSAL app instance so its internal token cache actually works —
+# creating a fresh ConfidentialClientApplication per call (the old code) means
+# every single token request re-authenticates over the network from scratch,
+# even seconds apart. Reusing the instance lets MSAL serve cached, unexpired
+# tokens instantly instead.
+_msal_app: ConfidentialClientApplication | None = None
+
+
+def _get_msal_app() -> ConfidentialClientApplication:
+    global _msal_app
+    if _msal_app is None:
+        _msal_app = ConfidentialClientApplication(
+            client_id=FABRIC_CLIENT_ID,
+            client_credential=FABRIC_CLIENT_SECRET,
+            authority=f"https://login.microsoftonline.com/{FABRIC_TENANT_ID}"
+        )
+    return _msal_app
+
+
+def get_fabric_token() -> str:
+    token_response = _get_msal_app().acquire_token_for_client(scopes=FABRIC_SCOPE)
+
 
     if "access_token" not in token_response:
         raise Exception(f"Token error: {token_response.get('error_description')}")
@@ -50,12 +73,15 @@ def get_fabric_token() -> str:
 
 
 def get_onelake_token() -> str:
+
     msal_app = ConfidentialClientApplication(
         client_id=FABRIC_CLIENT_ID,
         client_credential=FABRIC_CLIENT_SECRET,
         authority=f"https://login.microsoftonline.com/{FABRIC_TENANT_ID}"
     )
-    token_response = msal_app.acquire_token_for_client(scopes=ONELAKE_SCOPE)
+ 
+    token_response = _get_msal_app().acquire_token_for_client(scopes=ONELAKE_SCOPE)
+
 
     if "access_token" not in token_response:
         raise Exception(f"Token error: {token_response.get('error_description')}")
@@ -135,7 +161,9 @@ async def query_data_agent(user_input: str, max_wait_seconds: int = 90) -> dict:
     assistant_messages = [m for m in messages.data if m.role == "assistant"]
 
     if not assistant_messages:
-        answer = "Data agent se koi response nahi mila."
+
+        answer = "No response was received from the data agent."
+
     else:
         last = assistant_messages[-1]
         answer = "\n".join(
@@ -190,7 +218,9 @@ async def trigger_fabric_agent(user_input: str) -> dict:
                 # Job triggered but no location — success maano
                 return {
                     "requires_approval": False,
-                    "output": "✅ Pipeline successfully trigger ho gaya! Thodi der me result ready hoga.",
+
+                    "output": "✅ Pipeline triggered successfully. The result will be ready shortly.",
+
                     "job_id": "notebook"
                 }
 
@@ -221,7 +251,7 @@ async def poll_notebook_job(location: str, token: str, run_id: str, max_attempts
                 try:
                     output = await fetch_notebook_result(run_id)
                     if not output:
-                        output = "✅ Job completed! Output notebook me save hua."
+                        output = "✅ Job completed. The output has been saved to the notebook."
                 except Exception as e:
                     print(f"[ONELAKE FETCH ERROR] {e}")
                     output = "✅ Job completed successfully!"
@@ -241,7 +271,7 @@ async def poll_notebook_job(location: str, token: str, run_id: str, max_attempts
 
     return {
         "requires_approval": False,
-        "output": "⏳ Job chal raha hai background me!",
+        "output": "⏳ The job is still running in the background.",
         "job_id": "notebook"
     }
 
