@@ -193,6 +193,79 @@ def build_transfer_card(plan: dict):
     return MessageFactory.attachment(attachment)
 
 
+# Teams app id (manifest.json "id") + staticTabs entityId — deep-link opens the tab
+TEAMS_APP_ID = "2e5c4dc2-65ba-4a1e-a4e2-5cb98b9f7a1f"
+STOCK_ALERTS_ENTITY_ID = "stock-alerts"
+STOCK_ALERTS_TAB_DEEP_LINK = (
+    f"https://teams.microsoft.com/l/entity/{TEAMS_APP_ID}/{STOCK_ALERTS_ENTITY_ID}"
+)
+
+
+def build_open_alerts_tab_card(pending_count: int | None = None):
+    """
+    Single Adaptive Card with one button that opens the Stock Alerts tab
+    inside Teams (deep link). Used instead of flooding chat with many
+    Approve/Reject recommendation cards.
+    """
+    if pending_count is None:
+        summary = "Open the **Stock Alerts** dashboard to review and approve or reject transfers."
+    elif pending_count == 0:
+        summary = "No pending alerts right now. You can still open the dashboard to browse filters and history."
+    else:
+        summary = (
+            f"You have **{pending_count}** pending transfer recommendation(s). "
+            "Open the **Stock Alerts** tab to review them in one place."
+        )
+
+    card = {
+        "type": "AdaptiveCard",
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.4",
+        "body": [
+            {
+                "type": "Container",
+                "style": "emphasis",
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": "📊 Stock Alerts Dashboard",
+                        "weight": "Bolder",
+                        "size": "Large",
+                        "wrap": True,
+                    }
+                ],
+            },
+            {
+                "type": "TextBlock",
+                "text": summary,
+                "wrap": True,
+                "spacing": "Medium",
+            },
+            {
+                "type": "TextBlock",
+                "text": "Click the button below — it opens the Stock Alerts tab inside Teams.",
+                "wrap": True,
+                "size": "Small",
+                "isSubtle": True,
+                "spacing": "Small",
+            },
+        ],
+        "actions": [
+            {
+                "type": "Action.OpenUrl",
+                "title": "Open Stock Alerts",
+                "url": STOCK_ALERTS_TAB_DEEP_LINK,
+            }
+        ],
+    }
+
+    attachment = Attachment(
+        content_type="application/vnd.microsoft.card.adaptive",
+        content=card,
+    )
+    return MessageFactory.attachment(attachment)
+
+
 def build_recommendation_card(rec: dict):
     """
     Approve / Reject card for a stock-transfer recommendation pulled from

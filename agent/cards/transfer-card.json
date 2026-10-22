@@ -1,0 +1,84 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Transfer Recommendation",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${storeName} · ${indexLabel}",
+      "isSubtle": true,
+      "spacing": "None"
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Medium",
+      "facts": [
+        { "title": "SKU", "value": "${sku}" },
+        { "title": "Size", "value": "${size}" },
+        { "title": "Required Qty", "value": "${requiredQty}" },
+        { "title": "Transfer Qty", "value": "${transferQty}" },
+        { "title": "Receiver SOH", "value": "${receiverSoh}" },
+        { "title": "Donor SOH", "value": "${donorSoh}" },
+        { "title": "Donor Store", "value": "${donorStore}" },
+        { "title": "Scope", "value": "${scope}" },
+        { "title": "Status", "value": "${status}" }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Approve",
+      "style": "positive",
+      "verb": "approve_transfer",
+      "data": {
+        "transferId": "${transferId}",
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Reject",
+      "style": "destructive",
+      "verb": "reject_transfer",
+      "data": {
+        "transferId": "${transferId}",
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Previous",
+      "verb": "previous_transfer",
+      "data": {
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Next",
+      "verb": "next_transfer",
+      "data": {
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Back to Store",
+      "verb": "review_store",
+      "data": {
+        "storeId": "${storeId}"
+      }
+    }
+  ]
+}

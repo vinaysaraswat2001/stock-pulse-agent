@@ -1,0 +1,68 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "warning",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Confirm Action",
+          "weight": "Bolder",
+          "size": "Large"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${message}",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Medium",
+      "facts": [
+        { "title": "SKU", "value": "${sku}" },
+        { "title": "Size", "value": "${size}" },
+        { "title": "Transfer Qty", "value": "${transferQty}" },
+        { "title": "Store", "value": "${storeName}" }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Confirm Approve",
+      "style": "positive",
+      "verb": "confirm_approve",
+      "data": {
+        "transferId": "${transferId}",
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Confirm Reject",
+      "style": "destructive",
+      "verb": "confirm_reject",
+      "data": {
+        "transferId": "${transferId}",
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Cancel",
+      "verb": "open_transfers",
+      "data": {
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    }
+  ]
+}

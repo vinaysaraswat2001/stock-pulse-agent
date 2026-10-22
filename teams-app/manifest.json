@@ -1,9 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
   "manifestVersion": "1.16",
-  "version": "1.0.0",
-  "id": "b1c33470-25d0-436f-9d7b-689aaea51b59",
-  "packageName": "com.meridian.stockpulsebot",
+  "version": "1.0.3",
+  "id": "2e5c4dc2-65ba-4a1e-a4e2-5cb98b9f7a1f",
+  "packageName": "com.meridian.stockpulse.hub",
   "developer": {
     "name": "Meridian Solutions",
     "websiteUrl": "https://onmeridian.com",
@@ -15,12 +15,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "Stockpulse Bot",
-    "full": "Stockpulse Inventory Assistant"
+    "short": "StockPulse Hub",
+    "full": "StockPulse Inventory & Alerts Hub"
   },
   "description": {
-    "short": "Ask about top SKUs, dead stock, store performance, and approve transfers.",
-    "full": "Stockpulse Bot answers inventory and sales questions directly from your Fabric Lakehouse — top-selling SKUs, dead stock by store, best-performing stores, and SKU counts — and lets you approve or reject stock transfer recommendations right inside Teams."
+    "short": "Inventory insights, stock alerts, and transfer approvals in Teams.",
+    "full": "StockPulse Hub brings inventory intelligence into Teams — top SKUs, dead stock, store performance, transfer recommendations with Approve/Reject, and a full Stock Alerts dashboard tab powered by your Fabric Lakehouse."
   },
   "accentColor": "#005A9C",
   "bots": [
@@ -31,9 +31,23 @@
       "isNotificationOnly": false
     }
   ],
+  "staticTabs": [
+    {
+      "entityId": "stock-alerts",
+      "name": "Stock Alerts",
+      "contentUrl": "https://93ljs29h-5173.inc1.devtunnels.ms/#/stock-alerts",
+      "websiteUrl": "https://93ljs29h-5173.inc1.devtunnels.ms/",
+      "scopes": ["personal", "team", "groupChat"]
+    }
+  ],
   "permissions": [
     "identity",
     "messageTeamMembers"
   ],
-  "validDomains": []
+  "validDomains": [
+    "ellsworth-nonmaternal-julio.ngrok-free.dev",
+    "93ljs29h-5173.inc1.devtunnels.ms",
+    "devtunnels.ms",
+    "ngrok-free.dev"
+  ]
 }

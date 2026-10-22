@@ -1,0 +1,58 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "good",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "weight": "Bolder",
+          "size": "Large"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${message}",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Medium",
+      "facts": [
+        { "title": "SKU", "value": "${sku}" },
+        { "title": "Size", "value": "${size}" },
+        { "title": "Approved by", "value": "${approvedBy}" },
+        { "title": "Timestamp", "value": "${timestamp}" }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Next Transfer",
+      "verb": "next_transfer",
+      "data": {
+        "storeId": "${storeId}",
+        "index": "${index}"
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Back to Alerts",
+      "verb": "show_alerts_summary",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Home",
+      "verb": "show_welcome",
+      "data": {}
+    }
+  ]
+}

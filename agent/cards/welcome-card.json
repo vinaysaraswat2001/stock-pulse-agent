@@ -1,0 +1,63 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "StockPulse AI",
+          "weight": "Bolder",
+          "size": "Large"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Hello ${userName}",
+          "spacing": "Small",
+          "isSubtle": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "How can I help you today?",
+          "wrap": true,
+          "spacing": "Medium"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Stock Alerts",
+      "verb": "show_alerts_summary",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Critical Alerts",
+      "verb": "show_critical",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Inventory Summary",
+      "verb": "show_inventory_summary",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Dead Stock",
+      "verb": "show_dead_stock",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Top Selling SKUs",
+      "verb": "show_top_skus",
+      "data": {}
+    }
+  ]
+}

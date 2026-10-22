@@ -1,0 +1,120 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Today's Alerts",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${dateLabel}",
+      "isSubtle": true,
+      "spacing": "None"
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Medium",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Critical",
+              "isSubtle": true,
+              "size": "Small"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${critical}",
+              "weight": "Bolder",
+              "size": "ExtraLarge",
+              "color": "Attention"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Medium",
+              "isSubtle": true,
+              "size": "Small"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${medium}",
+              "weight": "Bolder",
+              "size": "ExtraLarge",
+              "color": "Warning"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Low",
+              "isSubtle": true,
+              "size": "Small"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${low}",
+              "weight": "Bolder",
+              "size": "ExtraLarge",
+              "color": "Good"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "View Critical",
+      "verb": "show_critical",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "View Medium",
+      "verb": "show_medium",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "View Low",
+      "verb": "show_low",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "View By Store",
+      "verb": "show_by_store",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Refresh",
+      "verb": "refresh_summary",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Home",
+      "verb": "show_welcome",
+      "data": {}
+    }
+  ]
+}

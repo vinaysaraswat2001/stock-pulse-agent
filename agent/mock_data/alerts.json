@@ -1,0 +1,173 @@
+{
+  "summary": {
+    "date": "2026-08-06",
+    "critical": 12,
+    "medium": 31,
+    "low": 48,
+    "total": 91
+  },
+  "stores": [
+    {
+      "id": "store-gurgaon",
+      "name": "Gurgaon",
+      "city": "Gurgaon",
+      "state": "HR",
+      "critical": 7,
+      "medium": 10,
+      "low": 15,
+      "alertCount": 32
+    },
+    {
+      "id": "store-delhi",
+      "name": "Delhi",
+      "city": "Delhi",
+      "state": "DL",
+      "critical": 5,
+      "medium": 8,
+      "low": 12,
+      "alertCount": 25
+    },
+    {
+      "id": "store-jaipur",
+      "name": "Jaipur",
+      "city": "Jaipur",
+      "state": "RJ",
+      "critical": 2,
+      "medium": 6,
+      "low": 9,
+      "alertCount": 17
+    },
+    {
+      "id": "store-mumbai",
+      "name": "Mumbai",
+      "city": "Mumbai",
+      "state": "MH",
+      "critical": 4,
+      "medium": 5,
+      "low": 7,
+      "alertCount": 16
+    }
+  ],
+  "transfers": {
+    "store-gurgaon": [
+      {
+        "id": "xfer-gur-001",
+        "sku": "ABC123",
+        "size": "M",
+        "requiredQty": 24,
+        "transferQty": 12,
+        "receiverSoh": 3,
+        "donorSoh": 45,
+        "donorStore": "Pantaloons Warehouse NCR",
+        "donorGrade": "A+",
+        "receiverGrade": "1A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      },
+      {
+        "id": "xfer-gur-002",
+        "sku": "DEF456",
+        "size": "L",
+        "requiredQty": 18,
+        "transferQty": 8,
+        "receiverSoh": 1,
+        "donorSoh": 32,
+        "donorStore": "Shopper Stop DC Gurgaon",
+        "donorGrade": "1A+",
+        "receiverGrade": "A+",
+        "scope": "Same State",
+        "status": "PENDING"
+      },
+      {
+        "id": "xfer-gur-003",
+        "sku": "GHI789",
+        "size": "32",
+        "requiredQty": 15,
+        "transferQty": 6,
+        "receiverSoh": 0,
+        "donorSoh": 28,
+        "donorStore": "Centro Hub NCR",
+        "donorGrade": "A+",
+        "receiverGrade": "A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      }
+    ],
+    "store-delhi": [
+      {
+        "id": "xfer-del-001",
+        "sku": "JKL012",
+        "size": "XL",
+        "requiredQty": 20,
+        "transferQty": 10,
+        "receiverSoh": 2,
+        "donorSoh": 38,
+        "donorStore": "Iconic DC Delhi",
+        "donorGrade": "A+",
+        "receiverGrade": "1A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      },
+      {
+        "id": "xfer-del-002",
+        "sku": "MNO345",
+        "size": "S",
+        "requiredQty": 12,
+        "transferQty": 5,
+        "receiverSoh": 4,
+        "donorSoh": 22,
+        "donorStore": "EBO Regional Hub",
+        "donorGrade": "1A+",
+        "receiverGrade": "A",
+        "scope": "Same State",
+        "status": "PENDING"
+      }
+    ],
+    "store-jaipur": [
+      {
+        "id": "xfer-jai-001",
+        "sku": "PQR678",
+        "size": "M",
+        "requiredQty": 10,
+        "transferQty": 4,
+        "receiverSoh": 1,
+        "donorSoh": 19,
+        "donorStore": "Pantaloons Jaipur Hub",
+        "donorGrade": "A+",
+        "receiverGrade": "A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      },
+      {
+        "id": "xfer-jai-002",
+        "sku": "VWX234",
+        "size": "L",
+        "requiredQty": 14,
+        "transferQty": 6,
+        "receiverSoh": 2,
+        "donorSoh": 25,
+        "donorStore": "Shopper Stop DC Jaipur",
+        "donorGrade": "1A+",
+        "receiverGrade": "A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      }
+    ],
+    "store-mumbai": [
+      {
+        "id": "xfer-mum-001",
+        "sku": "STU901",
+        "size": "L",
+        "requiredQty": 16,
+        "transferQty": 7,
+        "receiverSoh": 2,
+        "donorSoh": 41,
+        "donorStore": "Shopper Stop DC Mumbai",
+        "donorGrade": "1A+",
+        "receiverGrade": "A+",
+        "scope": "Same City",
+        "status": "PENDING"
+      }
+    ]
+  }
+}

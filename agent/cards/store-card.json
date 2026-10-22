@@ -1,0 +1,48 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Store Detail",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Medium",
+      "facts": [
+        { "title": "Store", "value": "${storeName}" },
+        { "title": "City", "value": "${city}" },
+        { "title": "Total Alerts", "value": "${alertCount}" },
+        { "title": "Critical", "value": "${critical}" },
+        { "title": "Medium", "value": "${medium}" },
+        { "title": "Low", "value": "${low}" }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Open Transfers",
+      "verb": "open_transfers",
+      "data": {
+        "storeId": "${storeId}",
+        "index": 0
+      }
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Back",
+      "verb": "show_critical",
+      "data": {}
+    },
+    {
+      "type": "Action.Execute",
+      "title": "Home",
+      "verb": "show_welcome",
+      "data": {}
+    }
+  ]
+}
