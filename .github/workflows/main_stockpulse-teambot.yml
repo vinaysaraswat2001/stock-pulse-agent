@@ -63,4 +63,4 @@ jobs:
         with:
           app-name: 'stockpulse-teambot'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_474B2BBC27F646E6851AF728E46A7A6B }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
