@@ -60,8 +60,9 @@ class StockpulseBot(ActivityHandler):
     async def on_members_added_activity(self, members_added, turn_context: TurnContext):
         for member in members_added:
             if member.id != turn_context.activity.recipient.id:
-                card = build_compact_summary_card(agent_data.get_summary())
-                await send_card(turn_context, card)
+                name = (member.name if member else None) or "there"
+                result = await agent_router.handle("show_welcome", {}, user_name=name)
+                await send_card(turn_context, result.card)
 
     # ─────────────────────────────────────────────
     # User sends a message
@@ -94,10 +95,11 @@ class StockpulseBot(ActivityHandler):
         try:
             lower_msg = user_message.lower().strip()
 
-            # Agent entry — compact summary card opens Teams Dialog
+            # Agent entry — welcome card with main navigation
             if lower_msg in ("hi", "hello", "hey", "start", "help", "menu"):
-                card = build_compact_summary_card(agent_data.get_summary())
-                await send_card(turn_context, card)
+                name = await self._user_name(turn_context)
+                result = await agent_router.handle("show_welcome", {}, user_name=name)
+                await send_card(turn_context, result.card)
                 return
 
             agent_alert_keywords = (
